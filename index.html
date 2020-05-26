@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<table id="content">
+    <!-- Ici le le résultat -->
+</table>
+
+<body>
+
+    <script>
+        (function () {
+            var httpRequest;
+            requete();
+
+            /** Lancement de la requete Ajax**/
+            function requete() {
+                httpRequest = new XMLHttpRequest();
+
+                if (!httpRequest) {
+                    alert('Abandon :( Impossible de créer une instance de XMLHTTP');
+                    return false;
+                }
+                httpRequest.onreadystatechange = content;
+                httpRequest.responseType = "json";
+                httpRequest.open('GET',
+                    'https://spreadsheets.google.com/feeds/cells/1OsXzQ88RYpU2Lkmhi4nzLWDgJWBU_Lj6aeAf2WNe0pI/1/public/full?alt=json'
+                    );
+                httpRequest.send();
+            }
+            /** Résultat de la requete Ajax **/
+            function content() {
+                if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                    if (httpRequest.status === 200) {
+                        var responce = httpRequest.response;
+                        console.log(responce.feed.entry);
+                        misEnTableau(responce.feed.entry);
+                    } else {
+                        alert('Il y a eu un problème avec la requête.');
+                    }
+                }
+            }
+            /** Résultat de la requete mis dans une table **/
+            function misEnTableau(data) {
+                // nombre de colonne du sheet
+                var nbColTotal = data[data.length - 1].gs$cell.col;
+                // Debut de la premiere ligne
+                var tableContent = '<tr>';
+                var col = 1;
+                data.forEach(function (item) {
+                    // une cellule
+                    tableContent += '<td>' + item.content.$t + '</td>';
+                    col++;
+                    if (col > nbColTotal) {
+                        // fin d'une ligne et début d'une nouvelle ligne
+                        tableContent += '</tr><tr>';
+                        col = 1;
+                    }
+                });
+                // fin de la dernier ligne
+                tableContent += '</tr>';
+
+                //affiche dans la table
+                document.getElementById("content").innerHTML = tableContent;
+            }
+        })();
+    </script>
+</body>
+
+</html>
