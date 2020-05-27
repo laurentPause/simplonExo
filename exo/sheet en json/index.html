@@ -48,7 +48,6 @@
             function misEnArray(data) {
                 // nombre de colonne du sheet
                 var nbColTotal = data[data.length - 1].gs$cell.col;
-                // Debut de la premiere ligne
                 var tableHead = [];
                 var tableContent = [];
                 data.forEach(function (item) {
@@ -66,7 +65,7 @@
             function afficeTab(tableHead, tableContent) {
                 var htmlHeadTab = '<thead><tr>';
                 tableHead.forEach(function (item) {
-                    htmlHeadTab += '<td>' + item + '</td>';
+                    htmlHeadTab += '<td>' + item.toUpperCase() + '</td>';
                 });
                 htmlHeadTab += '</tr></thead>';
 
@@ -96,6 +95,26 @@
             }
         })();
     </script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 90%;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            width: 20%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        caption {
+            font-weight: bold
+        }
+    </style>
 </body>
 
 </html>
