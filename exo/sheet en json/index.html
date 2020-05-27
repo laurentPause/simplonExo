@@ -29,7 +29,7 @@
                 httpRequest.responseType = "json";
                 httpRequest.open('GET',
                     'https://spreadsheets.google.com/feeds/cells/1OsXzQ88RYpU2Lkmhi4nzLWDgJWBU_Lj6aeAf2WNe0pI/1/public/full?alt=json'
-                    );
+                );
                 httpRequest.send();
             }
             /** Résultat de la requete Ajax **/
@@ -38,57 +38,32 @@
                     if (httpRequest.status === 200) {
                         var responce = httpRequest.response;
                         console.log(responce.feed.entry);
-                        misEnTableau(responce.feed.entry);
                         misEnArray(responce.feed.entry)
                     } else {
                         alert('Il y a eu un problème avec la requête.');
                     }
                 }
             }
-            /** Résultat de la requete mis dans une table **/
-            function misEnTableau(data) {
-                // nombre de colonne du sheet
-                var nbColTotal = data[data.length - 1].gs$cell.col;
-                // Debut de la premiere ligne
-                var tableContent = '<tr>';
-                var col = 1;
-                data.forEach(function (item) {
-                    // une cellule
-                   // tableContent += '<td>' + item.content.$t.replace(/(<([^>]+)>)/ig,"") + '</td>';
-                    tableContent += '<td>' + item.content.$t + '</td>';
-                    col++;
-                    if (col > nbColTotal) {
-                        // fin d'une ligne et début d'une nouvelle ligne
-                        tableContent += '</tr><tr>';
-                        col = 1;
-                    }
-                });
-                // fin de la dernier ligne
-                tableContent += '</tr>';
 
-                //affiche dans la table
-                //document.getElementById("content").innerHTML = tableContent;
-            }
-
-            function misEnArray(data){
+            function misEnArray(data) {
                 // nombre de colonne du sheet
                 var nbColTotal = data[data.length - 1].gs$cell.col;
                 // Debut de la premiere ligne
                 var tableHead = [];
                 var tableContent = [];
                 data.forEach(function (item) {
-                    if(item.gs$cell.row == 1){
-                        tableHead.push(item.content.$t);
-                    }else{
-                        tableContent.push(item.content.$t);
+                    if (item.gs$cell.row == 1) {
+                        tableHead.push(entitiesHtml(item.content.$t));
+                    } else {
+                        tableContent.push(entitiesHtml(item.content.$t));
                     }
                 });
                 console.log(tableHead);
                 console.log(tableContent);
-                afficeTab(tableHead,tableContent)
+                afficeTab(tableHead, tableContent)
             }
 
-            function afficeTab(tableHead,tableContent){
+            function afficeTab(tableHead, tableContent) {
                 var htmlHeadTab = '<thead><tr>';
                 tableHead.forEach(function (item) {
                     htmlHeadTab += '<td>' + item + '</td>';
@@ -109,6 +84,15 @@
                 });
                 htmlBodyTab += '</tr></thead>';
                 document.getElementById("content").innerHTML = htmlHeadTab + htmlBodyTab;
+            }
+
+            function entitiesHtml(str) {
+                return str
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
             }
         })();
     </script>
